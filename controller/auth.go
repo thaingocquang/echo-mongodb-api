@@ -29,6 +29,7 @@ func Register(c echo.Context) error {
 	}, "")
 }
 
+// Login ...
 func Login(c echo.Context) error {
 	var (
 		body = c.Get("body").(model.LoginBody)
@@ -37,10 +38,15 @@ func Login(c echo.Context) error {
 	// Process data
 	token, err := service.Login(body)
 
+	// if err
 	if err != nil {
 		return util.Response400(c, nil, err.Error())
 	}
 
-	// Success
-	return util.Response200(c, nil, token)
+	// return token
+	data := map[string]interface{}{
+		"token": token,
+	}
+
+	return util.Response200(c, data, "")
 }

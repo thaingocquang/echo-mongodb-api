@@ -15,10 +15,9 @@ func Login(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// ValidateStruct
 		c.Bind(&body)
-		err := body.Validate()
 
 		//if err
-		if err != nil {
+		if err := body.Validate(); err != nil {
 			return util.Response400(c, nil, err.Error())
 		}
 

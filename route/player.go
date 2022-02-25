@@ -1,14 +1,16 @@
 package route
 
 import (
+	"echo-mongodb-api/config"
 	"echo-mongodb-api/controller"
-	"echo-mongodb-api/validation"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
+
+var envVars = config.GetEnv()
 
 func player(e *echo.Echo) {
 	players := e.Group("/players")
-	players.POST("", controller.PlayerCreate, validation.PlayerCreate)
-	players.GET("/my-profile", controller.MyProfile, validation.AuthorizeJWT)
+	players.GET("/my-profile", controller.MyProfile, middleware.JWT([]byte(envVars.JWT.SecretKey)))
 }

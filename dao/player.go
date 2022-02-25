@@ -6,6 +6,7 @@ import (
 	"echo-mongodb-api/module/database"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // PlayerCreate ...
@@ -20,38 +21,60 @@ func PlayerCreate(doc model.PlayerBSON) (model.PlayerBSON, error) {
 	return doc, err
 }
 
+// PlayerFindByEmail ...
 func PlayerFindByEmail(email string) (model.PlayerDetail, error) {
 	var (
-		userCol = database.PlayerCol()
-		ctx     = context.Background()
+		userCol       = database.PlayerCol()
+		ctx           = context.Background()
+		existedPlayer model.PlayerDetail
 	)
-
-	var existedPlayer model.PlayerDetail
 
 	// find player
 	filter := bson.M{"email": email}
 	err := userCol.FindOne(ctx, filter).Decode(&existedPlayer)
 
+	// if err
 	if err != nil {
 		return existedPlayer, err
 	}
+
 	return existedPlayer, nil
 }
 
-func PlayerProfileByEmail(email string) (model.PlayerProfile, error) {
+// PlayerProfileFindByID ...
+func PlayerProfileFindByID(ID string) (model.PlayerProfile, error) {
+	var (
+		userCol = database.PlayerCol()
+		ctx     = context.Background()
+		profile model.PlayerProfile
+	)
+
+	// objectID
+	objID, _ := primitive.ObjectIDFromHex(ID)
+
+	// find profile
+	filter := bson.M{"_id": objID}
+	err := userCol.FindOne(ctx, filter).Decode(&profile)
+
+	// if err
+	if err != nil {
+		return profile, err
+	}
+
+	return profile, nil
+}
+
+// CheckEmailExisted ...
+func PlayerCheckEmailExisted(email string) bool {
 	var (
 		userCol = database.PlayerCol()
 		ctx     = context.Background()
 	)
 
-	var profile model.PlayerProfile
-
-	// find profile
-	filter := bson.M{"email": email}
-	err := userCol.FindOne(ctx, filter).Decode(&profile)
-
-	if err != nil {
-		return profile, err
+	count, err := userCol.CountDocuments(ctx, bson.M{"email": email})
+	if err != nil || count <= 0 {
+		return false
 	}
-	return profile, nil
+
+	return true
 }

@@ -1,35 +1,30 @@
 package service
 
 import (
-	"echo-mongodb-api/auth"
-	"echo-mongodb-api/config"
 	"echo-mongodb-api/dao"
 	"echo-mongodb-api/model"
 	"echo-mongodb-api/util"
 	"errors"
 )
 
-// PlayerCreate ...
+// Register ...
 func Register(body model.PlayerCreateBody) (model.PlayerBSON, error) {
 	var (
-		player = body.ConvertToBSON()
+		playerBSON = body.ConvertToBSON()
 	)
 
-	isEmailExisted, err := dao.CheckEmailExisted(body.Email)
-	if err != nil {
-		return player, err
-	}
-
+	// check email exist
+	isEmailExisted := dao.PlayerCheckEmailExisted(body.Email)
 	if isEmailExisted {
-		err = errors.New("email already existed")
-		return player, err
+		err := errors.New("email already existed")
+		return playerBSON, err
 	}
 
 	// hash player's password
-	player.Password = util.HashPassword(player.Password)
+	playerBSON.Password = util.HashPassword(playerBSON.Password)
 
 	//Create user
-	doc, err := dao.PlayerCreate(player)
+	doc, err := dao.PlayerCreate(playerBSON)
 	if err != nil {
 		err = errors.New("can not create user")
 		return doc, err
@@ -40,27 +35,28 @@ func Register(body model.PlayerCreateBody) (model.PlayerBSON, error) {
 
 // Login ...
 func Login(body model.LoginBody) (string, error) {
-
+	// find player in db
 	player, err := dao.PlayerFindByEmail(body.Email)
-	check, _ := util.VerifyPassword(player.Password, body.Password)
-	if err != nil || check {
+
+	// verify player password
+	check := util.VerifyPassword(player.Password, body.Password)
+
+	// if err
+	if err != nil {
 		err := errors.New("can not login")
 		return "", err
 	}
 
-	envVars := config.GetEnv()
-	jwtWrapper := auth.JwtWrapper{
-		SecretKey:       envVars.JWT.SecretKey,
-		Issuer:          "AuthService",
-		ExpirationHours: 24,
-	}
-
-	// geneate token
-	signedToken, err := jwtWrapper.GenerateToken(body.Email)
-	if err != nil {
-		err := errors.New("error signing token")
+	// wrong password
+	if !check {
+		err := errors.New("password in correct")
 		return "", err
 	}
 
-	return signedToken, nil
+	data := map[string]interface{}{
+		"id": player.ID,
+	}
+
+	// generate token
+	return util.GenerateUserToken(data), nil
 }

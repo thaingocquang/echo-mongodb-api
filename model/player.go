@@ -19,7 +19,7 @@ type (
 
 	// PlayerDetail ...
 	PlayerDetail struct {
-		ID        primitive.ObjectID `json:"_id"`
+		ID        primitive.ObjectID `bson:"_id" json:"_id"`
 		Name      string             `json:"name"`
 		Email     string             `json:"email"`
 		Password  string             `json:"password"`

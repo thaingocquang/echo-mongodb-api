@@ -1,10 +1,12 @@
 package config
 
+// Database ...
 type Database struct {
 	URI  string
 	Name string
 }
 
+// JWT ...
 type JWT struct {
 	SecretKey string
 }
