@@ -3,14 +3,18 @@ package controller
 import (
 	"echo-mongodb-api/service"
 	"echo-mongodb-api/util"
+	"fmt"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 )
 
+// MyProfile ...
 func MyProfile(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
+
+	fmt.Println("JWT: ", user)
 
 	// Process data
 	doc, err := service.PlayerProfileFindByID(claims["ID"].(string))
