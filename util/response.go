@@ -19,7 +19,7 @@ func generateResponse(data interface{}, message string) Response {
 // Response200 success.....
 func Response200(c echo.Context, data interface{}, message string) error {
 	if message == "" {
-		message = "Success!"
+		message = "success"
 	}
 	return c.JSON(http.StatusOK, generateResponse(data, message))
 }
@@ -27,7 +27,7 @@ func Response200(c echo.Context, data interface{}, message string) error {
 // Response400 badrequest ...
 func Response400(c echo.Context, data interface{}, message string) error {
 	if message == "" {
-		message = "Data invalid"
+		message = "data invalid"
 	}
 	return c.JSON(http.StatusBadRequest, generateResponse(data, message))
 }
@@ -35,7 +35,7 @@ func Response400(c echo.Context, data interface{}, message string) error {
 // Response404 not found
 func Response404(c echo.Context, data interface{}, message string) error {
 	if message == "" {
-		message = "Data not found"
+		message = "data not found"
 	}
 	return c.JSON(http.StatusNotFound, generateResponse(data, message))
 }

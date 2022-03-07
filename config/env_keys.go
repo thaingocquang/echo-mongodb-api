@@ -12,7 +12,7 @@ var env ENV
 // InitDotEnv init params in .env file
 func InitDotEnv() {
 	// load .env file
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("/home/quang/Documents/InternSelly/echo-mongodb-api/.env"); err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
