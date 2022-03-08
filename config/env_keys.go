@@ -3,16 +3,25 @@ package config
 import (
 	"log"
 	"os"
+	"regexp"
 
 	"github.com/joho/godotenv"
 )
 
 var env ENV
 
+const projectDirName = "echo-mongodb-api"
+
 // InitDotEnv init params in .env file
 func InitDotEnv() {
+	// get env path
+	projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
+	currentWorkDirectory, _ := os.Getwd()
+	rootPath := projectName.Find([]byte(currentWorkDirectory))
+	envPath := string(rootPath) + `/.env`
+
 	// load .env file
-	if err := godotenv.Load("/home/quang/Documents/InternSelly/echo-mongodb-api/.env"); err != nil {
+	if err := godotenv.Load(envPath); err != nil {
 		log.Fatal("Error loading .env file")
 	}
 

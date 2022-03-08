@@ -32,6 +32,7 @@ func (body PlayerCreateBody) Validate() error {
 		),
 		validation.Field(
 			&body.Email,
+			validation.Required.Error("email is required"),
 			is.Email,
 		),
 	)

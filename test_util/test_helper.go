@@ -1,12 +1,19 @@
-package util
+package testutil
 
 import (
+	"bytes"
 	"context"
+	"echo-mongodb-api/config"
 	"echo-mongodb-api/model"
 	"echo-mongodb-api/module/database"
+	"echo-mongodb-api/route"
+	"echo-mongodb-api/util"
+	"encoding/json"
+	"io"
 	"log"
 	"time"
 
+	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -36,7 +43,7 @@ func HelperPlayerCreateFake() {
 		ctx       = context.Background()
 	)
 
-	Player.Password = HashPassword(Player.Password)
+	Player.Password = util.HashPassword(Player.Password)
 
 	//Insert
 	_, err := playerCol.InsertOne(ctx, Player)
@@ -48,4 +55,21 @@ func HelperPlayerCreateFake() {
 // ClearDB ...
 func ClearDB() {
 	database.PlayerCol().DeleteMany(context.Background(), bson.M{})
+}
+
+func InitServer() *echo.Echo {
+	config.Init()
+	database.Connect()
+	ClearDB()
+
+	// new server
+	e := echo.New()
+	route.Route(e)
+
+	return e
+}
+
+func BodyToReader(i interface{}) io.Reader {
+	bodyMarshal, _ := json.Marshal(i)
+	return bytes.NewReader(bodyMarshal)
 }
