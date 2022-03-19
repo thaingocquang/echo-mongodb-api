@@ -27,7 +27,7 @@ func InitDotEnv() {
 
 	// ...
 	appPort := GetEnvString("APP_PORT")
-	database := Database{URI: GetEnvString("DB_URI"), Name: GetEnvString("DB_Name")}
+	database := Database{URI: GetEnvString("DB_URI"), Name: GetEnvString("DB_Name"), TestName: GetEnvString("DB_Name_Test")}
 
 	// jwt
 	jwt := JWT{SecretKey: GetEnvString("SECRET_KEY")}

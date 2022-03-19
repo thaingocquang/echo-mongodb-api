@@ -35,3 +35,11 @@ func Connect() {
 	db = cl.Database(envVars.Database.Name)
 	fmt.Println("Database Connected to", envVars.Database.Name)
 }
+
+func SetDB(dbValue *mongo.Database) {
+	db = dbValue
+}
+
+func GetDB() *mongo.Database {
+	return db
+}

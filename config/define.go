@@ -2,8 +2,9 @@ package config
 
 // Database ...
 type Database struct {
-	URI  string
-	Name string
+	URI      string
+	Name     string
+	TestName string
 }
 
 // JWT ...
